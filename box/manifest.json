@@ -1,1 +1,39 @@
-
+{
+  "id": "com.acome.circular-gauge",
+  "version": "1.0.0",
+  "name": "Jauge Demi-Cercle",
+  "newInstancePrefix": "Gauge",
+  "webcomponents": [
+    {
+      "kind": "main",
+      "tag": "circular-gauge",
+      "url": "https://qbastard.github.io/sac_widget/gauge.js",
+      "integrity": "",
+      "ignoreIntegrity": true
+    }
+  ],
+  "properties": {
+    "value":      { "type": "float",  "default": 0,            "description": "Valeur actuelle" },
+    "maxValue":   { "type": "float",  "default": 100,          "description": "Objectif" },
+    "label":      { "type": "string", "default": "Indicateur", "description": "Libellé" },
+    "colorAbove": { "type": "string", "default": "#27AE60",    "description": "Couleur si >= objectif" },
+    "colorBelow": { "type": "string", "default": "#C0392B",    "description": "Couleur si < objectif" }
+  },
+  "methods": {
+    "setValue": {
+      "description": "Définit la valeur et l'objectif",
+      "parameters": [
+        { "name": "newValue",    "type": "float",  "description": "Valeur" },
+        { "name": "newMaxValue", "type": "float",  "description": "Objectif" },
+        { "name": "newLabel",    "type": "string", "description": "Libellé" }
+      ],
+      "body": "this.value = newValue; this.maxValue = newMaxValue; this.label = newLabel;"
+    },
+    "getValue": {
+      "returnType": "float",
+      "description": "Retourne la valeur",
+      "body": "return this.value;"
+    }
+  },
+  "events": {}
+}
