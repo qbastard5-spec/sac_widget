@@ -45,5 +45,7 @@
     "objFontSize": { "type": "number", "default": 11 },
     "labelColor": { "type": "string", "default": "#8899aa" },
     "objColor": { "type": "string", "default": "#667788" }
-  }
+  },
+  "methods": {},
+  "events": {}
 }
