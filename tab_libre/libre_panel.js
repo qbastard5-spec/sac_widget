@@ -134,7 +134,7 @@ propertiesToBind.forEach(prop => {
 });
 
 // Enregistrement global du composant
-customElements.define('librepanel', LibrePanel);
+customElements.define("libre-panel", LibrePanel);
 
 // Astuce pour SAC : On expose aussi la classe sur la fenêtre globale
 window.LibrePanel = LibrePanel;
