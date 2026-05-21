@@ -12,21 +12,21 @@ stylingTmpl.innerHTML = `
   </style>
   <div>
     <div class="section">
-      <div class="section-title">Seuils & Alertes (Thresholds)</div>
+      <div class="section-title">Seuils & Alertes</div>
       <div class="row">
-        <label>Couleur Succès (>= 100%)</label>
+        <label>Couleur Succès (>= 100%)\u00a0:</label>
         <input type="color" id="colorAbove">
       </div>
       <div class="row">
-        <label>% Déclenchement Alerte</label>
+        <label>% Déclenchement Alerte\u00a0:</label>
         <input type="number" id="warningPct" min="0" max="100">
       </div>
       <div class="row">
-        <label>Couleur Alerte</label>
+        <label>Couleur Alerte\u00a0:</label>
         <input type="color" id="colorWarning">
       </div>
       <div class="row">
-        <label>Couleur Échec</label>
+        <label>Couleur Échec\u00a0:</label>
         <input type="color" id="colorBelow">
       </div>
     </div>
@@ -42,7 +42,7 @@ stylingTmpl.innerHTML = `
         <input type="checkbox" id="showVariance">
       </div>
       <div class="row">
-        <label>Mode de la variance</label>
+        <label>Mode de la variance\u00a0:</label>
         <select id="varianceMode">
           <option value="diff">Absolu (+/-)</option>
           <option value="pct">Pourcentage (%)</option>
@@ -53,23 +53,23 @@ stylingTmpl.innerHTML = `
     <div class="section">
       <div class="section-title">Conteneur & Marges</div>
       <div class="row">
-        <label>Couleur de Fond</label>
+        <label>Couleur de Fond\u00a0:</label>
         <input type="color" id="bgColor">
       </div>
       <div class="row">
-        <label>Couleur Bordure</label>
+        <label>Couleur Bordure\u00a0:</label>
         <input type="color" id="borderColor">
       </div>
       <div class="row">
-        <label>Arrondi des angles (px)</label>
+        <label>Arrondi des angles (px)\u00a0:</label>
         <input type="number" id="borderRadius" min="0" max="40">
       </div>
       <div class="row">
-        <label>Épaisseur Contour (px)</label>
+        <label>Épaisseur Contour (px)\u00a0:</label>
         <input type="number" id="borderWidth" min="0" max="10">
       </div>
       <div class="row">
-        <label>Marge Interne / Padding (px)</label>
+        <label>Marge Interne (px)\u00a0:</label>
         <input type="number" id="padding" min="0" max="50">
       </div>
     </div>
@@ -77,23 +77,23 @@ stylingTmpl.innerHTML = `
     <div class="section">
       <div class="section-title">Typographie & Polices</div>
       <div class="row">
-        <label>Taille Valeur (px)</label>
+        <label>Taille Valeur (px)\u00a0:</label>
         <input type="number" id="valueFontSize" min="10" max="72">
       </div>
       <div class="row">
-        <label>Taille Libellé (px)</label>
+        <label>Taille Libellé (px)\u00a0:</label>
         <input type="number" id="labelFontSize" min="8" max="24">
       </div>
       <div class="row">
-        <label>Couleur Libellé</label>
+        <label>Couleur Libellé\u00a0:</label>
         <input type="color" id="labelColor">
       </div>
       <div class="row">
-        <label>Taille Objectif (px)</label>
+        <label>Taille Objectif (px)\u00a0:</label>
         <input type="number" id="objFontSize" min="8" max="24">
       </div>
       <div class="row">
-        <label>Couleur Objectif</label>
+        <label>Couleur Objectif\u00a0:</label>
         <input type="color" id="objColor">
       </div>
     </div>
@@ -111,33 +111,18 @@ class KPICardStyling extends HTMLElement {
     });
   }
 
-  // FONCTION CORRECTIVE INDISPENSABLE : Reçoit les propriétés actuelles de SAC pour pré-remplir les champs du panneau
   onCustomWidgetBeforeUpdate(changedProperties) {
     if (!changedProperties) return;
     for (const prop in changedProperties) {
-      if (this[prop]) {
-        this[prop] = changedProperties[prop];
+      if (this._root.getElementById(prop)) {
+        if (this._root.getElementById(prop).type === "checkbox") {
+          this._root.getElementById(prop).checked = !!changedProperties[prop];
+        } else {
+          this._root.getElementById(prop).value = changedProperties[prop];
+        }
       }
     }
   }
-
-  set colorAbove(v) { this._root.getElementById("colorAbove").value = v; }
-  set colorWarning(v) { this._root.getElementById("colorWarning").value = v; }
-  set colorBelow(v) { this._root.getElementById("colorBelow").value = v; }
-  set warningPct(v) { this._root.getElementById("warningPct").value = v; }
-  set showObjective(v) { this._root.getElementById("showObjective").checked = !!v; }
-  set showVariance(v) { this._root.getElementById("showVariance").checked = !!v; }
-  set varianceMode(v) { this._root.getElementById("varianceMode").value = v; }
-  set bgColor(v) { this._root.getElementById("bgColor").value = v; }
-  set borderColor(v) { this._root.getElementById("borderColor").value = v; }
-  set borderRadius(v) { this._root.getElementById("borderRadius").value = v; }
-  set borderWidth(v) { this._root.getElementById("borderWidth").value = v; }
-  set padding(v) { this._root.getElementById("padding").value = v; }
-  set valueFontSize(v) { this._root.getElementById("valueFontSize").value = v; }
-  set labelFontSize(v) { this._root.getElementById("labelFontSize").value = v; }
-  set objFontSize(v) { this._root.getElementById("objFontSize").value = v; }
-  set labelColor(v) { this._root.getElementById("labelColor").value = v; }
-  set objColor(v) { this._root.getElementById("objColor").value = v; }
 
   _onChange(target) {
     const id = target.id;
