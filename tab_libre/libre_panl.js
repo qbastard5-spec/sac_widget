@@ -59,26 +59,27 @@
       this._root = this.attachShadow({ mode: "open" });
       this._root.appendChild(tmpl.content.cloneNode(true));
       
-      // Initialisation du tableau de données
-      this._data = Array.from({ length: 8 }, (_, i) => ({
-        nom: `Indicateur ${i + 1}`,
-        val: 0,
-        obj: 100
-      }));
-      this._colorAbove = "#27AE60";
-      this._colorBelow = "#C0392B";
+      // Stockage interne à plat des propriétés requises par SAC
+      this._props = {
+        colorAbove: "#27AE60",
+        colorBelow: "#C0392B"
+      };
+      
+      // Initialisation par défaut des 8 indicateurs
+      for (let i = 1; i <= 8; i++) {
+        this._props[`nom${i}`] = `Indicateur ${i}`;
+        this._props[`val${i}`] = 0;
+        this._props[`obj${i}`] = 100;
+      }
     }
 
-    // Cette méthode est appelée par SAC à chaque modification de propriétés
-    onCustomWidgetAfterUpdate(changed) {
-      for (let i = 1; i <= 8; i++) {
-        if (`nom${i}` in changed) this._data[i-1].nom = changed[`nom${i}`];
-        if (`val${i}` in changed) this._data[i-1].val = parseFloat(changed[`val${i}`]) || 0;
-        if (`obj${i}` in changed) this._data[i-1].obj = parseFloat(changed[`obj${i}`]) || 100;
-      }
-      if ("colorAbove" in changed) this._colorAbove = changed["colorAbove"];
-      if ("colorBelow" in changed) this._colorBelow = changed["colorBelow"];
+    // Gère la mise à jour globale via SAC
+    onCustomWidgetAfterUpdate(changedProperties) {
+      if (!changedProperties) return;
       
+      for (const prop in changedProperties) {
+        this._props[prop] = changedProperties[prop];
+      }
       this._render();
     }
 
@@ -87,12 +88,17 @@
       return Number.isInteger(n) ? String(n) : parseFloat(n.toFixed(2)).toString();
     }
 
-    _rowHTML(item) {
-      const color = item.val >= item.obj ? this._colorAbove : this._colorBelow;
+    _rowHTML(index) {
+      const nom = this._props[`nom${index}`] || "—";
+      const val = parseFloat(this._props[`val${index}`]) || 0;
+      const obj = parseFloat(this._props[`obj${index}`]) || 100;
+      
+      const color = val >= obj ? this._props.colorAbove : this._props.colorBelow;
+      
       return `
         <div class="row">
-          <span class="lbl" title="${item.nom}">${item.nom || "—"}</span>
-          <span class="val" style="color:${color}">${this._fmt(item.val)}</span>
+          <span class="lbl" title="${nom}">${nom}</span>
+          <span class="val" style="color:${color}">${this._fmt(val)}</span>
         </div>`;
     }
 
@@ -101,8 +107,14 @@
       const col2 = this._root.getElementById("col2");
       
       if (col1 && col2) {
-        col1.innerHTML = this._data.slice(0, 4).map(d => this._rowHTML(d)).join("");
-        col2.innerHTML = this._data.slice(4, 8).map(d => this._rowHTML(d)).join("");
+        let htmlCol1 = "";
+        let htmlCol2 = "";
+        
+        for (let i = 1; i <= 4; i++) htmlCol1 += this._rowHTML(i);
+        for (let i = 5; i <= 8; i++) htmlCol2 += this._rowHTML(i);
+        
+        col1.innerHTML = htmlCol1;
+        col2.innerHTML = htmlCol2;
       }
     }
 
@@ -111,6 +123,23 @@
     }
   }
 
-  // CORRECTION ICI : Remplacement de LibrePanelClass par LibrePanel
+  // Génération dynamique des Getters et Setters demandés par le framework SAC
+  const propertiesToBind = ["colorAbove", "colorBelow"];
+  for (let i = 1; i <= 8; i++) {
+    propertiesToBind.push(`nom${i}`, `val${i}`, `obj${i}`);
+  }
+
+  propertiesToBind.forEach(prop => {
+    Object.defineProperty(LibrePanel.prototype, prop, {
+      get: function() { return this._props[prop]; },
+      set: function(value) { 
+        this._props[prop] = value; 
+        this._render();
+      },
+      enumerable: true,
+      configurable: true
+    });
+  });
+
   customElements.define('librepanel', LibrePanel);
 })();
