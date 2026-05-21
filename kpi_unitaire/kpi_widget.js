@@ -81,7 +81,6 @@ class KPICard extends HTMLElement {
     };
   }
 
-  // Intercepte les données provenant du Builder SAC
   set myData(dataBinding) {
     if (!dataBinding || dataBinding.state === "loading") return;
     if (dataBinding.data && dataBinding.data.length > 0) {
@@ -114,7 +113,6 @@ class KPICard extends HTMLElement {
     const p = this._props;
     const card = this._root.getElementById("card");
 
-    // Application dynamique des styles du conteneur
     card.style.backgroundColor = p.bgColor;
     card.style.borderColor = p.borderColor;
     card.style.borderWidth = `${p.borderWidth}px`;
@@ -122,13 +120,11 @@ class KPICard extends HTMLElement {
     card.style.borderRadius = `${p.borderRadius}px`;
     card.style.padding = `${p.padding}px`;
 
-    // Titre de la carte
     const lblEl = this._root.getElementById("label");
     lblEl.textContent = this._dimLabel || p.labelText;
     lblEl.style.fontSize = `${p.labelFontSize}px`;
     lblEl.style.color = p.labelColor;
 
-    // Détermination de la couleur selon les seuils (Thresholds)
     let color = p.colorAbove;
     if (this._val !== null && this._obj !== null && this._obj !== 0) {
       const pct = (this._val / this._obj) * 100;
@@ -140,16 +136,14 @@ class KPICard extends HTMLElement {
         color = p.colorBelow;
       }
     } else if (this._val !== null && this._obj === null) {
-      color = p.colorAbove; // Couleur fixe succès si pas d'objectif lié
+      color = p.colorAbove;
     }
 
-    // Affichage de la Valeur
     const valEl = this._root.getElementById("value");
     valEl.textContent = this._fmt(this._val);
     valEl.style.fontSize = `${p.valueFontSize}px`;
     valEl.style.color = color;
 
-    // Affichage discret de l'Objectif
     const objEl = this._root.getElementById("objective");
     if (p.showObjective && this._obj !== null) {
       objEl.style.display = "";
@@ -160,7 +154,6 @@ class KPICard extends HTMLElement {
       objEl.style.display = "none";
     }
 
-    // Gestion de l'add-on de Variance
     const varEl = this._root.getElementById("variance");
     if (p.showVariance && this._val !== null && this._obj !== null) {
       varEl.style.display = "";
@@ -187,7 +180,6 @@ class KPICard extends HTMLElement {
   }
 }
 
-// Enregistrement des accesseurs de propriétés requis par SAC
 const propertiesList = [
   "labelText", "colorAbove", "colorWarning", "colorBelow", "warningPct",
   "showObjective", "showVariance", "varianceMode", "bgColor", "borderColor",
