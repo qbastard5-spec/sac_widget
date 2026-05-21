@@ -1,211 +1,208 @@
-(() => {
-  const tmpl = document.createElement("template");
-  tmpl.innerHTML = `
-    <style>
-      :host {
-        display: block;
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
-        cursor: pointer;
-      }
-      .card {
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        font-family: sans-serif;
-        overflow: hidden;
-      }
-      .label {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-bottom: 4px;
-      }
-      .value-row {
-        display: flex;
-        align-items: baseline;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-      .value { font-weight: 700; line-height: 1; }
-      .objective { line-height: 1; }
-      .variance {
-        font-size: 0.8em;
-        margin-top: 4px;
-        display: flex;
-        align-items: center;
-        gap: 3px;
-      }
-      .arrow { font-size: 0.9em; }
-    </style>
-    <div class="card" id="card">
-      <div class="label"  id="label">KPI</div>
-      <div class="value-row">
-        <span class="value"     id="value">—</span>
-        <span class="objective" id="objective"></span>
-      </div>
-      <div class="variance" id="variance"></div>
+const tmpl = document.createElement("template");
+tmpl.innerHTML = `
+  <style>
+    :host {
+      display: block;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+    }
+    .card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-family: sans-serif;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    .label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+    .value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .value { font-weight: 700; line-height: 1; }
+    .objective { line-height: 1; font-weight: normal; opacity: 0.8; }
+    .variance {
+      font-size: 0.8em;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+  </style>
+  <div class="card" id="card">
+    <div class="label" id="label">KPI</div>
+    <div class="value-row">
+      <span class="value" id="value">0</span>
+      <span class="objective" id="objective">Obj: 0</span>
     </div>
-  `;
+    <div class="variance" id="variance"></div>
+  </div>
+`;
 
-  class KpiCard extends HTMLElement {
-    constructor() {
-      super();
-      this._root = this.attachShadow({ mode: "open" });
-      this._root.appendChild(tmpl.content.cloneNode(true));
+class KPICard extends HTMLElement {
+  constructor() {
+    super();
+    this._root = this.attachShadow({ mode: "open" });
+    this._root.appendChild(tmpl.content.cloneNode(true));
 
-      this._val = null;
-      this._obj = null;
-      this._lbl = null;
-      this._binding = null;
-      this._props = {};
+    // Variables de données internes (issues du binding SAC)
+    this._val = null;
+    this._obj = null;
+    this._dimLabel = null;
 
-      this._root.getElementById("card").addEventListener("click", () => {
-        this.dispatchEvent(new Event("onClick"));
-      });
+    // Propriétés de style par défaut
+    this._props = {
+      labelText: "Indicateur",
+      colorAbove: "#27AE60",
+      colorWarning: "#E67E22",
+      colorBelow: "#C0392B",
+      warningPct: 90,
+      showObjective: true,
+      showVariance: true,
+      varianceMode: "diff",
+      bgColor: "#222840",
+      borderColor: "#2a2a3a",
+      borderWidth: 1,
+      borderRadius: 8,
+      padding: 12,
+      valueFontSize: 28,
+      labelFontSize: 12,
+      objFontSize: 11,
+      labelColor: "#8899aa",
+      objColor: "#667788"
+    };
+  }
+
+  // Intercepte les données injectées par le modèle SAC
+  set myData(dataBinding) {
+    if (!dataBinding || dataBinding.state === "loading") return;
+    
+    if (dataBinding.data && dataBinding.data.length > 0) {
+      const row = dataBinding.data[0];
+      
+      // Extraction des mesures et dimensions selon les métadonnées
+      if (row.value) this._val = row.value.raw;
+      if (row.objective) this._obj = row.objective.raw;
+      if (row.label) this._dimLabel = row.label.label;
     }
+    this._render();
+  }
 
-    onCustomWidgetBeforeUpdate(changed) {
-      this._props = Object.assign({}, this._props, changed);
+  onCustomWidgetAfterUpdate(changedProperties) {
+    if (!changedProperties) return;
+    for (const prop in changedProperties) {
+      this._props[prop] = changedProperties[prop];
     }
+    this._render();
+  }
 
-    onCustomWidgetAfterUpdate(changed) {
-      if ("dataBindings" in changed) {
-        this._binding = changed.dataBindings["myData"];
-      }
+  _fmt(n) {
+    if (n === null || n === undefined || isNaN(n)) return "—";
+    return Number.isInteger(n) ? String(n) : parseFloat(n.toFixed(2)).toString();
+  }
 
-      // Stocker les props
-      var p = this._props;
-      if ("value_manual"    in changed) this._val = changed.value_manual;
-      if ("objective_manual" in changed) this._obj = changed.objective_manual;
-      if ("labelText"       in changed) this._lbl = changed.labelText;
+  _render() {
+    const p = this._props;
+    const card = this._root.getElementById("card");
+    
+    // Application des styles dynamiques demandés (Marge interne, bordures, fond)
+    card.style.backgroundColor = p.bgColor;
+    card.style.borderColor = p.borderColor;
+    card.style.borderWidth = `${p.borderWidth}px`;
+    card.style.borderStyle = p.borderWidth > 0 ? "solid" : "none";
+    card.style.borderRadius = `${p.borderRadius}px`;
+    card.style.padding = `${p.padding}px`;
 
-      this._readBinding();
-      this._applyStyle();
-      this._render();
-    }
+    // Gestion du Titre/Libellé
+    const lblEl = this._root.getElementById("label");
+    lblEl.textContent = this._dimLabel || p.labelText;
+    lblEl.style.fontSize = `${p.labelFontSize}px`;
+    lblEl.style.color = p.labelColor;
 
-    _readBinding() {
-      if (!this._binding) return;
-      try {
-        var rs = this._binding.getResultSet();
-        if (!rs || rs.length === 0) return;
-
-        var row = rs[0];
-        var vFeed = this._binding.getFeed("value");
-        var oFeed = this._binding.getFeed("objective");
-        var lFeed = this._binding.getFeed("label");
-
-        if (vFeed && vFeed[0]) this._val = parseFloat(row[vFeed[0].id]) || null;
-        if (oFeed && oFeed[0]) this._obj = parseFloat(row[oFeed[0].id]) || null;
-        if (lFeed && lFeed[0]) this._lbl = row[lFeed[0].id] || null;
-
-        console.log("[KPI] val=" + this._val + " obj=" + this._obj + " lbl=" + this._lbl);
-      } catch(e) {
-        console.log("[KPI] Erreur binding:", e.message);
-      }
-    }
-
-    _applyStyle() {
-      var p = this._props;
-      var card = this._root.getElementById("card");
-
-      var bg     = p.bgColor      ? "#" + p.bgColor      : "#222840";
-      var border = p.borderColor  ? "#" + p.borderColor  : "#2a2a3a";
-      var radius = (p.borderRadius !== undefined ? p.borderRadius : 8) + "px";
-      var bw     = (p.borderWidth  !== undefined ? p.borderWidth  : 1) + "px";
-      var pad    = (p.padding       !== undefined ? p.padding      : 10) + "px";
-
-      card.style.background    = bg;
-      card.style.border        = bw + " solid " + border;
-      card.style.borderRadius  = radius;
-      card.style.padding       = pad;
-
-      // Label
-      var lbl = this._root.getElementById("label");
-      lbl.style.fontSize = (p.labelFontSize || 12) + "px";
-      lbl.style.color    = p.labelColor ? "#" + p.labelColor : "#8899aa";
-    }
-
-    _fmt(n) {
-      if (n === null || n === undefined || isNaN(n)) return "—";
-      return Number.isInteger(n) ? String(n) : parseFloat(n.toFixed(2)).toString();
-    }
-
-    _getColor() {
-      var p = this._props;
-      if (this._val === null || this._obj === null) {
-        return "#" + (p.colorAbove || "27AE60");
-      }
-
-      var pct = (this._val / this._obj) * 100;
-      var warn = p.warningPct !== undefined ? p.warningPct : 80;
-
-      if (this._val >= this._obj) {
-        return "#" + (p.colorAbove || "27AE60");
-      } else if (pct >= warn) {
-        return "#" + (p.colorWarning || "E67E22");
+    // Calcul du seuil de couleur (Threshold)
+    let color = p.colorAbove;
+    if (this._val !== null && this._obj !== null && this._obj !== 0) {
+      const pct = (this._val / this._obj) * 100;
+      if (pct >= 100) {
+        color = p.colorAbove;
+      } else if (pct >= p.warningPct) {
+        color = p.colorWarning;
       } else {
-        return "#" + (p.colorBelow || "C0392B");
+        color = p.colorBelow;
       }
     }
 
-    _render() {
-      var p = this._props;
-      var color = this._getColor();
+    // Valeur principale
+    const valEl = this._root.getElementById("value");
+    valEl.textContent = this._fmt(this._val);
+    valEl.style.fontSize = `${p.valueFontSize}px`;
+    valEl.style.color = color;
 
-      // Label
-      var lbl = this._root.getElementById("label");
-      lbl.textContent = this._lbl || p.labelText || "KPI";
+    // Objectif (Affiché en plus petit à côté ou dessous)
+    const objEl = this._root.getElementById("objective");
+    if (p.showObjective && this._obj !== null) {
+      objEl.style.display = "inline";
+      objEl.textContent = `Obj: ${this._fmt(this._obj)}`;
+      objEl.style.fontSize = `${p.objFontSize}px`;
+      objEl.style.color = p.objColor;
+    } else {
+      objEl.style.display = "none";
+    }
 
-      // Valeur
-      var valEl = this._root.getElementById("value");
-      valEl.textContent = this._fmt(this._val);
-      valEl.style.fontSize = (p.valueFontSize || 28) + "px";
-      valEl.style.color    = color;
-
-      // Objectif
-      var objEl = this._root.getElementById("objective");
-      var showObj = p.showObjective !== false;
-      objEl.style.display = showObj && this._obj !== null ? "" : "none";
-      objEl.textContent = "Obj : " + this._fmt(this._obj);
-      objEl.style.fontSize = (p.objFontSize || 11) + "px";
-      objEl.style.color    = "#" + (p.objColor || "667788");
-
-      // Variance
-      var varEl = this._root.getElementById("variance");
-      var showVar = p.showVariance !== false;
-
-      if (showVar && this._val !== null && this._obj !== null) {
-        var mode = p.varianceMode || "diff";
-        var diff = this._val - this._obj;
-        var varTxt, arrow;
-
-        if (mode === "pct") {
-          var pctVal = ((diff / this._obj) * 100);
-          varTxt = (diff >= 0 ? "+" : "") + parseFloat(pctVal.toFixed(1)) + "%";
-        } else {
-          varTxt = (diff >= 0 ? "+" : "") + this._fmt(diff);
-        }
-
-        arrow = diff >= 0 ? "▲" : "▼";
-        varEl.style.color   = color;
-        varEl.style.display = "";
-        varEl.innerHTML = '<span class="arrow">' + arrow + '</span>' + varTxt;
+    // Ajout de l'addon de variance (Écart absolu ou pourcentage)
+    const varEl = this._root.getElementById("variance");
+    if (p.showVariance && this._val !== null && this._obj !== null) {
+      varEl.style.display = "flex";
+      const diff = this._val - this._obj;
+      let txt = "";
+      
+      if (p.varianceMode === "pct" && this._obj !== 0) {
+        const pctVal = (diff / this._obj) * 100;
+        txt = `${diff >= 0 ? "+" : ""}${pctVal.toFixed(1)}%`;
       } else {
-        varEl.style.display = "none";
+        txt = `${diff >= 0 ? "+" : ""}${this._fmt(diff)}`;
       }
-    }
-
-    connectedCallback() {
-      this._applyStyle();
-      this._render();
+      
+      const arrow = diff >= 0 ? "▲" : "▼";
+      varEl.textContent = `${arrow} ${txt} vs objectif`;
+      varEl.style.color = color;
+    } else {
+      varEl.style.display = "none";
     }
   }
 
-  customElements.define("kpi-card", KpiCard);
-})();
+  connectedCallback() {
+    this._render();
+  }
+}
+
+// Liaison dynamique des Getters / Setters requis par SAC pour le design
+const properties = [
+  "labelText", "colorAbove", "colorWarning", "colorBelow", "warningPct",
+  "showObjective", "showVariance", "varianceMode", "bgColor", "borderColor",
+  "borderWidth", "borderRadius", "padding", "valueFontSize", "labelFontSize",
+  "objFontSize", "labelColor", "objColor"
+];
+
+properties.forEach(prop => {
+  Object.defineProperty(KPICard.prototype, prop, {
+    get: function() { return this._props[prop]; },
+    set: function(val) { this._props[prop] = val; this._render(); },
+    enumerable: true,
+    configurable: true
+  });
+});
+
+customElements.define("kpi-card", KPICard);
+window.KPICard = KPICard;
