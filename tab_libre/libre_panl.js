@@ -102,5 +102,5 @@
     connectedCallback() { this._render(); }
   }
 
-  customElements.define("libre-panel", LibrePanel);
+  customElements.define('librepanel', LibrePanelClass);
 })();
