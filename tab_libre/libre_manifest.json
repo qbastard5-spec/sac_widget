@@ -6,7 +6,7 @@
   "webcomponents": [
     {
       "kind": "main",
-      "tag": "librepanel",
+      "tag": "libre-panel",
       "url": "https://qbastard5-spec.github.io/sac_widget/box/libre_panl.js",
       "integrity": "",
       "ignoreIntegrity": true
