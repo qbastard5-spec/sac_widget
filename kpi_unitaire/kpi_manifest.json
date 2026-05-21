@@ -1,47 +1,28 @@
 {
-  "id": "com.acome.kpi.unitaire.final",
-  "version": "1.0.1",
-  "name": "KPI Card Unitaire Pro",
+  "id": "com.acome.kpi.unitaire.local",
+  "version": "1.0.0",
+  "name": "KPI Card Unitaire Local",
   "newInstancePrefix": "KPI",
-  "supportsLinkedAnalysisFilterOnSelection": true,
   "webcomponents": [
     {
       "kind": "main",
       "tag": "kpi-card",
-      "url": "https://qbastard5-spec.github.io//sac_widget/kpi_unitaire/kpi_widget.js",
+      "url": "kpi_widget.js",
       "ignoreIntegrity": true
     },
     {
       "kind": "styling",
       "tag": "kpi-card-styling",
-      "url": "https://qbastard5-spec.github.io//sac_widget/kpi_unitaire/kpi_styling.js",
+      "url": "kpi_styling.js",
       "ignoreIntegrity": true
     }
   ],
   "dataBindings": {
     "myData": {
       "feeds": [
-        { 
-          "id": "value", 
-          "description": "Valeur", 
-          "type": "MeasureFeed", 
-          "min": 1, 
-          "max": 1 
-        },
-        { 
-          "id": "objective", 
-          "description": "Objectif", 
-          "type": "MeasureFeed", 
-          "min": 0, 
-          "max": 1 
-        },
-        { 
-          "id": "label", 
-          "description": "Libellé", 
-          "type": "DimensionFeed", 
-          "min": 0, 
-          "max": 1 
-        }
+        { "id": "value", "description": "Valeur", "type": "MeasureFeed", "min": 1, "max": 1 },
+        { "id": "objective", "description": "Objectif", "type": "MeasureFeed", "min": 0, "max": 1 },
+        { "id": "label", "description": "Libellé", "type": "DimensionFeed", "min": 0, "max": 1 }
       ]
     }
   },
