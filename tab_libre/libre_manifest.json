@@ -1,12 +1,12 @@
 {
-  "id": "com.acome.libre-panel",
+  "id": "com.acome.librepanel",
   "version": "1.0.0",
   "name": "Panneau Indicateurs Libres",
   "newInstancePrefix": "LibrePanel",
   "webcomponents": [
     {
       "kind": "main",
-      "tag": "libre-panel",
+      "tag": "librepanel",
       "url": "https://qbastard5-spec.github.io/sac_widget/box/libre_panel.js",
       "integrity": "",
       "ignoreIntegrity": true
@@ -71,6 +71,6 @@
       ],
       "body": "this.val1=v1;this.obj1=o1;this.nom1=n1;this.val2=v2;this.obj2=o2;this.nom2=n2;this.val3=v3;this.obj3=o3;this.nom3=n3;this.val4=v4;this.obj4=o4;this.nom4=n4;this.val5=v5;this.obj5=o5;this.nom5=n5;this.val6=v6;this.obj6=o6;this.nom6=n6;this.val7=v7;this.obj7=o7;this.nom7=n7;this.val8=v8;this.obj8=o8;this.nom8=n8;"
     }
-  },
+  ],
   "events": {}
 }
