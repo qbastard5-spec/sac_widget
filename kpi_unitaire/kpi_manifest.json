@@ -1,7 +1,7 @@
 {
-  "id": "com.acome.kpi.unitaire.local",
-  "version": "1.0.0",
-  "name": "KPI Card Unitaire Local",
+  "id": "com.acome.kpi.unitaire.fixed",
+  "version": "1.0.2",
+  "name": "KPI Card Unitaire V2",
   "newInstancePrefix": "KPI",
   "webcomponents": [
     {
