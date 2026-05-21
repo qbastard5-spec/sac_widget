@@ -58,6 +58,8 @@
       super();
       this._root = this.attachShadow({ mode: "open" });
       this._root.appendChild(tmpl.content.cloneNode(true));
+      
+      // Initialisation du tableau de données
       this._data = Array.from({ length: 8 }, (_, i) => ({
         nom: `Indicateur ${i + 1}`,
         val: 0,
@@ -67,6 +69,7 @@
       this._colorBelow = "#C0392B";
     }
 
+    // Cette méthode est appelée par SAC à chaque modification de propriétés
     onCustomWidgetAfterUpdate(changed) {
       for (let i = 1; i <= 8; i++) {
         if (`nom${i}` in changed) this._data[i-1].nom = changed[`nom${i}`];
@@ -75,6 +78,7 @@
       }
       if ("colorAbove" in changed) this._colorAbove = changed["colorAbove"];
       if ("colorBelow" in changed) this._colorBelow = changed["colorBelow"];
+      
       this._render();
     }
 
@@ -93,14 +97,20 @@
     }
 
     _render() {
-      this._root.getElementById("col1").innerHTML =
-        this._data.slice(0, 4).map(d => this._rowHTML(d)).join("");
-      this._root.getElementById("col2").innerHTML =
-        this._data.slice(4, 8).map(d => this._rowHTML(d)).join("");
+      const col1 = this._root.getElementById("col1");
+      const col2 = this._root.getElementById("col2");
+      
+      if (col1 && col2) {
+        col1.innerHTML = this._data.slice(0, 4).map(d => this._rowHTML(d)).join("");
+        col2.innerHTML = this._data.slice(4, 8).map(d => this._rowHTML(d)).join("");
+      }
     }
 
-    connectedCallback() { this._render(); }
+    connectedCallback() { 
+      this._render(); 
+    }
   }
 
-  customElements.define('librepanel', LibrePanelClass);
+  // CORRECTION ICI : Remplacement de LibrePanelClass par LibrePanel
+  customElements.define('librepanel', LibrePanel);
 })();
