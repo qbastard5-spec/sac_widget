@@ -1,5 +1,5 @@
 {
-  "id": "com.acome.kpi.unitaire",
+  "id": "com.acome.kpi.unitaire.v2",
   "version": "1.0.0",
   "name": "KPI Card Unitaire",
   "newInstancePrefix": "KPI",
@@ -7,13 +7,13 @@
     {
       "kind": "main",
       "tag": "kpi-card",
-      "url": "https://qbastard5-spec.github.io/sac_widget/kpi_unitaire/kpi_widget.js",
+      "url": "https://qbastard5-spec.github.io//sac_widget/kpi_unitaire/kpi_widget.js",
       "ignoreIntegrity": true
     },
     {
       "kind": "styling",
       "tag": "kpi-card-styling",
-      "url": "https://qbastard5-spec.github.io/sac_widget/kpi_unitaire/kpi_styling.js",
+      "url": "https://qbastard5-spec.github.io//sac_widget/kpi_unitaire/kpi_styling.js",
       "ignoreIntegrity": true
     }
   ],
@@ -45,7 +45,5 @@
     "objFontSize": { "type": "number", "default": 11 },
     "labelColor": { "type": "string", "default": "#8899aa" },
     "objColor": { "type": "string", "default": "#667788" }
-  },
-  "methods": {},
-  "events": {}
+  }
 }
