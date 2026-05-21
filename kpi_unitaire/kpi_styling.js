@@ -111,6 +111,16 @@ class KPICardStyling extends HTMLElement {
     });
   }
 
+  // FONCTION CORRECTIVE INDISPENSABLE : Reçoit les propriétés actuelles de SAC pour pré-remplir les champs du panneau
+  onCustomWidgetBeforeUpdate(changedProperties) {
+    if (!changedProperties) return;
+    for (const prop in changedProperties) {
+      if (this[prop]) {
+        this[prop] = changedProperties[prop];
+      }
+    }
+  }
+
   set colorAbove(v) { this._root.getElementById("colorAbove").value = v; }
   set colorWarning(v) { this._root.getElementById("colorWarning").value = v; }
   set colorBelow(v) { this._root.getElementById("colorBelow").value = v; }
