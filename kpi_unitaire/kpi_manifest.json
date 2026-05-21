@@ -1,7 +1,7 @@
 {
   "id": "com.acome.kpi",
   "version": "1.0.0",
-  "name": "KPI Card Individuelle",
+  "name": "KPI Card",
   "newInstancePrefix": "KPI",
   "webcomponents": [
     {
@@ -24,32 +24,42 @@
   "dataBindings": {
     "myData": {
       "feeds": [
-        { "id": "value", "description": "Valeur", "type": "MeasureFeed", "min": 1, "max": 1 },
+        { "id": "value", "description": "Valeur", "type": "MeasureFeed", "min": 0, "max": 1 },
         { "id": "objective", "description": "Objectif", "type": "MeasureFeed", "min": 0, "max": 1 },
         { "id": "label", "description": "Libellé", "type": "DimensionFeed", "min": 0, "max": 1 }
       ]
     }
   },
   "properties": {
-    "labelText": { "type": "string", "default": "Indicateur" },
-    "colorAbove": { "type": "string", "default": "#27AE60" },
-    "colorWarning": { "type": "string", "default": "#E67E22" },
-    "colorBelow": { "type": "string", "default": "#C0392B" },
-    "warningPct": { "type": "number", "default": 90 },
+    "labelText": { "type": "string", "default": "KPI" },
+    "colorAbove": { "type": "string", "default": "#27ae60" },
+    "colorWarning": { "type": "string", "default": "#e67e22" },
+    "colorBelow": { "type": "string", "default": "#c0392b" },
+    "warningPct": { "type": "number", "default": 80 },
     "showObjective": { "type": "boolean", "default": true },
     "showVariance": { "type": "boolean", "default": true },
     "varianceMode": { "type": "string", "default": "diff" },
     "bgColor": { "type": "string", "default": "#222840" },
     "borderColor": { "type": "string", "default": "#2a2a3a" },
-    "borderWidth": { "type": "number", "default": 1 },
     "borderRadius": { "type": "number", "default": 8 },
-    "padding": { "type": "number", "default": 12 },
+    "borderWidth": { "type": "number", "default": 1 },
+    "padding": { "type": "number", "default": 10 },
     "valueFontSize": { "type": "number", "default": 28 },
     "labelFontSize": { "type": "number", "default": 12 },
     "objFontSize": { "type": "number", "default": 11 },
     "labelColor": { "type": "string", "default": "#8899aa" },
     "objColor": { "type": "string", "default": "#667788" }
   },
-  "methods": {},
+  "methods": {
+    "setData": {
+      "description": "Définit manuellement les données",
+      "parameters": [
+        { "name": "v", "type": "number" },
+        { "name": "o", "type": "number" },
+        { "name": "l", "type": "string" }
+      ],
+      "body": "this.labelText = l; this._val = v; this._obj = o; this._render();"
+    }
+  },
   "events": {}
 }
