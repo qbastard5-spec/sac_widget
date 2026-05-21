@@ -111,7 +111,6 @@ class KPICardStyling extends HTMLElement {
     });
   }
 
-  // Setters appelés par SAC pour remplir les champs du panneau de style latéral
   set colorAbove(v) { this._root.getElementById("colorAbove").value = v; }
   set colorWarning(v) { this._root.getElementById("colorWarning").value = v; }
   set colorBelow(v) { this._root.getElementById("colorBelow").value = v; }
@@ -142,7 +141,6 @@ class KPICardStyling extends HTMLElement {
       val = target.value;
     }
 
-    // Dispatch officiel pour rafraîchir l'interface SAC en temps réel au clic/saisie
     this.dispatchEvent(new CustomEvent("propertiesChanged", {
       detail: { properties: { [id]: val } }
     }));
