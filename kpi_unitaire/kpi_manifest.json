@@ -1,8 +1,9 @@
 {
-  "id": "com.acome.kpi.unitaire.v3",
-  "version": "1.0.0",
-  "name": "KPI Card Unitaire",
+  "id": "com.acome.kpi.unitaire.final",
+  "version": "1.0.1",
+  "name": "KPI Card Unitaire Pro",
   "newInstancePrefix": "KPI",
+  "supportsLinkedAnalysisFilterOnSelection": true,
   "webcomponents": [
     {
       "kind": "main",
@@ -20,9 +21,27 @@
   "dataBindings": {
     "myData": {
       "feeds": [
-        { "id": "value", "description": "Valeur", "type": "MeasureFeed", "min": 1, "max": 1 },
-        { "id": "objective", "description": "Objectif", "type": "MeasureFeed", "min": 0, "max": 1 },
-        { "id": "label", "description": "Libellé", "type": "DimensionFeed", "min": 0, "max": 1 }
+        { 
+          "id": "value", 
+          "description": "Valeur", 
+          "type": "MeasureFeed", 
+          "min": 1, 
+          "max": 1 
+        },
+        { 
+          "id": "objective", 
+          "description": "Objectif", 
+          "type": "MeasureFeed", 
+          "min": 0, 
+          "max": 1 
+        },
+        { 
+          "id": "label", 
+          "description": "Libellé", 
+          "type": "DimensionFeed", 
+          "min": 0, 
+          "max": 1 
+        }
       ]
     }
   },
