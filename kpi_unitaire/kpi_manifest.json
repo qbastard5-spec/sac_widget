@@ -1,23 +1,19 @@
 {
-  "id": "com.acome.kpi",
+  "id": "com.acome.kpi.unitaire",
   "version": "1.0.0",
-  "name": "KPI Card",
+  "name": "KPI Card Unitaire",
   "newInstancePrefix": "KPI",
   "webcomponents": [
     {
       "kind": "main",
       "tag": "kpi-card",
       "url": "https://qbastard5-spec.github.io/sac_widget/kpi_unitaire/kpi_widget.js",
-      "crossOrigin": "anonymous",
-      "integrity": "",
       "ignoreIntegrity": true
     },
     {
       "kind": "styling",
       "tag": "kpi-card-styling",
       "url": "https://qbastard5-spec.github.io/sac_widget/kpi_unitaire/kpi_styling.js",
-      "crossOrigin": "anonymous",
-      "integrity": "",
       "ignoreIntegrity": true
     }
   ],
@@ -49,17 +45,5 @@
     "objFontSize": { "type": "number", "default": 11 },
     "labelColor": { "type": "string", "default": "#8899aa" },
     "objColor": { "type": "string", "default": "#667788" }
-  },
-  "methods": {
-    "setData": {
-      "description": "Définit manuellement les données",
-      "parameters": [
-        { "name": "v", "type": "number" },
-        { "name": "o", "type": "number" },
-        { "name": "l", "type": "string" }
-      ],
-      "body": "this.labelText = l; this._val = v; this._obj = o; this._render();"
-    }
-  },
-  "events": {}
+  }
 }
